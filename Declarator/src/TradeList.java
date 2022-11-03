@@ -4,13 +4,12 @@ import org.jsoup.nodes.Element;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TradeList {
-    public List<Trade> getTrades() throws IOException, ParseException {
+    public List<Trade> getTrades() throws IOException {
         final File file = new File("C:/Users/Jonas/Desktop/Statement.htm");
         final Document document = Jsoup.parse(file, "UTF-8");
         List<Element> elementList = new ArrayList<>(document.select("table tr"));

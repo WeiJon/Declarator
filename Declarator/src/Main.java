@@ -1,7 +1,6 @@
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
