@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
 
 public class Calculation {
 
-    public void calculate() throws IOException, ParseException {
+    public void calculate(LocalDate startDate, LocalDate endDate) throws IOException, ParseException {
         TradeList tradeList = new TradeList();
         RateList rateList = new RateList();
         List<Trade> trades = tradeList.getTrades();
@@ -26,14 +26,14 @@ public class Calculation {
             calculatedTrades.add(calculateTrade(rateOpen, rateClose, trade, baseCurrency, quoteCurrency));
         }
 
-        BigDecimal sum = BigDecimal.ZERO;
+        /*BigDecimal sum = BigDecimal.ZERO;
         BigDecimal sumDollar = BigDecimal.ZERO;
         for (TradeCalculated trade : calculatedTrades) {
             sum = sum.add(trade.getResult());
             sumDollar = sumDollar.add(trade.getDollarResult());
         }
         System.out.println(sum);
-        System.out.println(sumDollar);
+        System.out.println(sumDollar);*/
     }
 
     private TradeCalculated calculateTrade(Rate rateOpen, Rate rateClose, Trade trade, String base, String quote) {
