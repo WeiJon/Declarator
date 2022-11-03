@@ -1,7 +1,8 @@
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class Rate {
-    private String date;
+    private LocalDate date;
     private BigDecimal cad;
     private BigDecimal chf;
     private BigDecimal jpy;
@@ -10,7 +11,7 @@ public class Rate {
     public Rate() {
     }
 
-    public Rate(String date, BigDecimal cad, BigDecimal chf, BigDecimal jpy, BigDecimal usd) {
+    public Rate(LocalDate date, BigDecimal cad, BigDecimal chf, BigDecimal jpy, BigDecimal usd) {
         this.date = date;
         this.cad = cad;
         this.chf = chf;
@@ -18,11 +19,11 @@ public class Rate {
         this.usd = usd;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

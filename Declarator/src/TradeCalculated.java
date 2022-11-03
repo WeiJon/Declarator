@@ -3,18 +3,18 @@ import java.math.BigDecimal;
 public class TradeCalculated {
     private Long amount;
     private String currency;
-    private BigDecimal buyPrice;
     private BigDecimal sellPrice;
+    private BigDecimal buyPrice;
     private BigDecimal result;
     private BigDecimal dollarResult;
 
     public TradeCalculated() {
     }
-    public TradeCalculated(Long amount, String currency, BigDecimal buyPrice, BigDecimal sellPrice, BigDecimal result, BigDecimal dollarResult) {
+    public TradeCalculated(Long amount, String currency, BigDecimal sellPrice, BigDecimal buyPrice, BigDecimal result, BigDecimal dollarResult) {
         this.amount = amount;
         this.currency = currency;
-        this.buyPrice = buyPrice;
         this.sellPrice = sellPrice;
+        this.buyPrice = buyPrice;
         this.result = result;
         this.dollarResult = dollarResult;
     }

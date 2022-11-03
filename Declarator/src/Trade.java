@@ -1,7 +1,5 @@
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 public class Trade {
     private LocalDate opening;
@@ -13,7 +11,8 @@ public class Trade {
     private BigDecimal priceClose;
     private BigDecimal commission;
     private BigDecimal swap;
-    private BigDecimal profit;
+    private BigDecimal profitInUsd;
+
 
     public Trade() {
     }
@@ -28,7 +27,7 @@ public class Trade {
         this.priceClose = priceClose;
         this.commission = commission;
         this.swap = swap;
-        this.profit = profit;
+        this.profitInUsd = profit;
     }
 
     public LocalDate getOpening() {
@@ -104,11 +103,11 @@ public class Trade {
     }
 
     public BigDecimal getProfit() {
-        return profit;
+        return profitInUsd;
     }
 
     public void setProfit(BigDecimal profit) {
-        this.profit = profit;
+        this.profitInUsd = profit;
     }
 
 }

@@ -4,6 +4,7 @@ import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +17,11 @@ public class RateList {
 
         for (int i = 2; i < elementList.size(); i++) {
             List<Element> tempList = new ArrayList<>(elementList.get(i).select("td"));
-            rateList.add(new Rate(tempList.get(0).text(), new BigDecimal(tempList.get(1).text()), new BigDecimal(tempList.get(2).text()),
-                    new BigDecimal(tempList.get(3).text()), new BigDecimal(tempList.get(4).text())));
+            rateList.add(new Rate(LocalDate.parse(tempList.get(0).text()),
+                    new BigDecimal(tempList.get(1).text()),
+                    new BigDecimal(tempList.get(2).text()),
+                    new BigDecimal(tempList.get(3).text()),
+                    new BigDecimal(tempList.get(4).text())));
         }
 
         return rateList;
