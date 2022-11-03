@@ -8,24 +8,24 @@ import java.time.LocalDate;
 public class Main {
     public static void main(String[] args) {
         Calculation calculate = new Calculation();
-        JDateChooser jd = new JDateChooser();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd");
+        JDateChooser chooser = new JDateChooser();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         try {
             String startMessage = "Choose start date:\n";
-            Object[] paramsStart = {startMessage, jd};
+            Object[] paramsStart = {startMessage, chooser};
             JOptionPane.showConfirmDialog(null, paramsStart, "Start date", JOptionPane.DEFAULT_OPTION);
 
             String start;
-            start = sdf.format(((JDateChooser) paramsStart[1]).getDate());
+            start = dateFormat.format(((JDateChooser) paramsStart[1]).getDate());
             LocalDate startDate = LocalDate.parse(start);
 
             String endMessage = "Choose end date:\n";
-            Object[] paramsEnd = {endMessage, jd};
+            Object[] paramsEnd = {endMessage, chooser};
             JOptionPane.showConfirmDialog(null, paramsEnd, "End date", JOptionPane.DEFAULT_OPTION);
 
             String end;
-            end = sdf.format(((JDateChooser) paramsEnd[1]).getDate());
+            end = dateFormat.format(((JDateChooser) paramsEnd[1]).getDate());
             LocalDate endDate = LocalDate.parse(end);
 
             calculate.calculate(startDate, endDate);
