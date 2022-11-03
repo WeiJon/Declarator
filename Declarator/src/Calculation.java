@@ -90,34 +90,34 @@ public class Calculation {
 
     private TradeCalculated addBuyTrade(long amount, String base, Trade trade, BigDecimal rateOpen, BigDecimal rateClose, BigDecimal usdOpen, BigDecimal usdClose, String quote) {
         if (quote.equals("chf") || quote.equals("jpy")) {
-            BigDecimal rateDivider = new BigDecimal("100");
-            rateOpen = rateOpen.divide(rateDivider);
-            rateClose = rateClose.divide(rateDivider);
+            final BigDecimal rateDivider = new BigDecimal("100");
+            rateOpen = rateOpen.divide(rateDivider, 9, RoundingMode.HALF_UP);
+            rateClose = rateClose.divide(rateDivider, 9, RoundingMode.HALF_UP);
         }
 
         BigDecimal sellPrice = trade.getPriceClose().multiply(new BigDecimal(amount)).multiply(rateClose);
         BigDecimal buyPrice = trade.getPriceOpen().multiply(new BigDecimal(amount).multiply(rateOpen))
                 .subtract((trade.getCommission().multiply(usdOpen)).add(trade.getSwap().multiply(usdClose)));
 
-        BigDecimal profit = sellPrice.subtract(buyPrice).setScale(6, RoundingMode.CEILING);
-        BigDecimal dollarProfit = trade.getProfit().add(trade.getCommission().add(trade.getSwap())).setScale(2, RoundingMode.CEILING);
+        BigDecimal profit = sellPrice.subtract(buyPrice).setScale(6, RoundingMode.HALF_UP);
+        BigDecimal dollarProfit = trade.getProfit().add(trade.getCommission().add(trade.getSwap())).setScale(2, RoundingMode.HALF_UP);
 
         return new TradeCalculated(amount, base.toUpperCase(), sellPrice, buyPrice, profit, dollarProfit);
     }
 
     private TradeCalculated addSellTrade(long amount, String base, Trade trade, BigDecimal rateOpen, BigDecimal rateClose, BigDecimal usdOpen, BigDecimal usdClose, String quote) {
         if (quote.equals("chf") || quote.equals("jpy")) {
-            BigDecimal rateDivider = new BigDecimal("100");
-            rateOpen = rateOpen.divide(rateDivider);
-            rateClose = rateClose.divide(rateDivider);
+            final BigDecimal rateDivider = new BigDecimal("100");
+            rateOpen = rateOpen.divide(rateDivider, 9, RoundingMode.HALF_UP);
+            rateClose = rateClose.divide(rateDivider, 9, RoundingMode.HALF_UP);
         }
 
         BigDecimal sellPrice = trade.getPriceOpen().multiply(new BigDecimal(amount).multiply(rateOpen));
         BigDecimal buyPrice = trade.getPriceClose().multiply(new BigDecimal(amount).multiply(rateClose))
                 .subtract((trade.getCommission().multiply(usdOpen)).add(trade.getSwap().multiply(usdClose)));
 
-        BigDecimal profit = sellPrice.subtract(buyPrice).setScale(6, RoundingMode.CEILING);
-        BigDecimal dollarProfit = trade.getProfit().add(trade.getCommission().add(trade.getSwap())).setScale(2, RoundingMode.CEILING);
+        BigDecimal profit = sellPrice.subtract(buyPrice).setScale(6, RoundingMode.HALF_UP);
+        BigDecimal dollarProfit = trade.getProfit().add(trade.getCommission().add(trade.getSwap())).setScale(2, RoundingMode.HALF_UP);
 
         return new TradeCalculated(amount, base.toUpperCase(), sellPrice, buyPrice, profit, dollarProfit);
     }
