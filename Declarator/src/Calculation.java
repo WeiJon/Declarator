@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,10 +8,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Calculation {
-    private TradeRepository tradeList = new TradeRepository();
-    private RateRepository rateList = new RateRepository();
+    private final TradeRepository tradeList = new TradeRepository();
+    private final RateRepository rateList = new RateRepository();
 
-    public  List<TradeCalculated> calculate() throws IOException, ParseException {
+    public  List<TradeCalculated> calculate() throws IOException {
         List<Trade> trades = tradeList.getTrades();
         List<Rate> rates = rateList.getRates(getRateUrl(getFirstDate(trades), getLastDate(trades)));
         List<TradeCalculated> calculatedTrades = new ArrayList<>();
@@ -78,6 +77,7 @@ public class Calculation {
                 }
             }
         }
+
         return tradeNew;
     }
 
