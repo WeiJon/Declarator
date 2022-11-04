@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Calculation {
+    private TradeRepository tradeList = new TradeRepository();
+    private RateRepository rateList = new RateRepository();
 
-    public void calculate(LocalDate startDate, LocalDate endDate) throws IOException, ParseException {
-        TradeList tradeList = new TradeList();
-        RateList rateList = new RateList();
+    public  List<TradeCalculated> calculate() throws IOException, ParseException {
         List<Trade> trades = tradeList.getTrades();
         List<Rate> rates = rateList.getRates(getRateUrl(getFirstDate(trades), getLastDate(trades)));
         List<TradeCalculated> calculatedTrades = new ArrayList<>();
@@ -26,14 +26,7 @@ public class Calculation {
             calculatedTrades.add(calculateTrade(rateOpen, rateClose, trade, baseCurrency, quoteCurrency));
         }
 
-        /*BigDecimal sum = BigDecimal.ZERO;
-        BigDecimal sumDollar = BigDecimal.ZERO;
-        for (TradeCalculated trade : calculatedTrades) {
-            sum = sum.add(trade.getResult());
-            sumDollar = sumDollar.add(trade.getDollarResult());
-        }
-        System.out.println(sum);
-        System.out.println(sumDollar);*/
+        return calculatedTrades;
     }
 
     private TradeCalculated calculateTrade(Rate rateOpen, Rate rateClose, Trade trade, String base, String quote) {
