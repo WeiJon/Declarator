@@ -44,9 +44,7 @@ public class ResultFileCreation {
 
     private StringBuilder[] insertTrades(List<TradeCalculated> tradeList) {
         StringBuilder totalRows = new StringBuilder();
-        if (tradeList.isEmpty()) {
-            return null;
-        }
+
         String currency = tradeList.get(0).getCurrency();
         long amountSum = 0L;
         BigDecimal sellPriceSum = BigDecimal.ZERO;
@@ -56,12 +54,12 @@ public class ResultFileCreation {
 
         for (TradeCalculated tradeCalculated : tradeList) {
             String totalCells = (
-                    "<td>" + tradeCalculated.getAmount() + "</td>"
-                    + "<td>" + tradeCalculated.getCurrency() + "</td>"
-                    + "<td>" + tradeCalculated.getSellPrice().setScale(6, RoundingMode.HALF_UP) + "</td>"
-                    + "<td>" + tradeCalculated.getBuyPrice().setScale(6, RoundingMode.HALF_UP) + "</td>"
-                    + "<td>" + tradeCalculated.getResult() + "</td>"
-                    + "<td>" + tradeCalculated.getDollarResult() + "</td>");
+                    "<td>" + tradeCalculated.getAmount() + "</td>" +
+                    "<td>" + tradeCalculated.getCurrency() + "</td>" +
+                    "<td>" + tradeCalculated.getSellPrice().setScale(6, RoundingMode.HALF_UP) + "</td>" +
+                    "<td>" + tradeCalculated.getBuyPrice().setScale(6, RoundingMode.HALF_UP) + "</td>" +
+                    "<td>" + tradeCalculated.getResult() + "</td>" +
+                    "<td>" + tradeCalculated.getDollarResult() + "</td>");
 
             amountSum += tradeCalculated.getAmount();
             sellPriceSum = sellPriceSum.add(tradeCalculated.getSellPrice());
@@ -71,23 +69,25 @@ public class ResultFileCreation {
 
             totalRows.append("<tr>").append(totalCells).append("</tr>");
         }
-        StringBuilder[] totalPerCurrency = insertPerCurrency(amountSum, currency, sellPriceSum, buyPriceSum, resultSum, resultUsdSum);
+        StringBuilder[] totalPerCurrency = totalPerCurrency(amountSum, currency, sellPriceSum, buyPriceSum, resultSum, resultUsdSum);
 
-        return new StringBuilder[] {totalRows, totalPerCurrency[0], totalPerCurrency[1]};
+        return new StringBuilder[] {totalRows, totalPerCurrency[0], totalPerCurrency[1],totalPerCurrency[2], totalPerCurrency[3]};
     }
 
-    private StringBuilder[] insertPerCurrency(long amount, String currency, BigDecimal sellPrice, BigDecimal buyPrice, BigDecimal result, BigDecimal resultUsd) {
+    private StringBuilder[] totalPerCurrency(long amount, String currency, BigDecimal sellPrice, BigDecimal buyPrice, BigDecimal result, BigDecimal resultUsd) {
         return new StringBuilder[] {new StringBuilder(
-                "<th>" + amount + "</th>"
-                + "<th>" + currency + "</th>"
-                + "<th>" + sellPrice.setScale(0, RoundingMode.HALF_UP) + "</th>"
-                + "<th>" + buyPrice.setScale(0, RoundingMode.HALF_UP) + "</th>"
-                + "<th>" + result.setScale(0, RoundingMode.HALF_UP) + "</th>"
-                + "<th>" + resultUsd.setScale(0, RoundingMode.HALF_UP) + "</th>"),
-                new StringBuilder(result.setScale(0, RoundingMode.HALF_UP).toString())};
+                "<th>" + amount + "</th>" +
+                "<th>" + currency + "</th>" +
+                "<th>" + sellPrice.setScale(0, RoundingMode.HALF_UP) + "</th>" +
+                "<th>" + buyPrice.setScale(0, RoundingMode.HALF_UP) + "</th>" +
+                "<th>" + result.setScale(0, RoundingMode.HALF_UP) + "</th>" +
+                "<th>" + resultUsd.setScale(0, RoundingMode.HALF_UP) + "</th>"),
+                new StringBuilder(result.setScale(0, RoundingMode.HALF_UP).toString()),
+                new StringBuilder(result.toString()),
+                new StringBuilder(resultUsd.toString())};
     }
 
-    private StringBuilder insertTotal(StringBuilder totalAud, StringBuilder totalEur, StringBuilder totalGbp, StringBuilder totalUsd) {
+    private StringBuilder insertTotal(StringBuilder totalAud, StringBuilder totalEur, StringBuilder totalGbp, StringBuilder totalUsd, BigDecimal sek, BigDecimal usd) {
         Integer totalBefore =
                 Integer.parseInt(totalAud.toString()) +
                 Integer.parseInt(totalEur.toString()) +
@@ -97,31 +97,38 @@ public class ResultFileCreation {
         BigDecimal totalAfter = new BigDecimal(String.valueOf(totalBefore)).subtract(totalTax).setScale(2, RoundingMode.HALF_UP);
 
         return new StringBuilder(
-                "<th>" + totalBefore + " SEK" +"</th>"
-                + "<th>" + totalTax + " SEK" + "</th>"
-                + "<th>" + totalAfter + " SEK" +"</th>");
+                "<th>" + totalBefore + " SEK" +"</th>" +
+                "<th>" + totalTax + " SEK" + "</th>" +
+                "<th>" + totalAfter + " SEK" +"</th>" +
+                "<th></th>" +
+                "<th>Add To Account: </th>" +
+                "<td>" + usd + "</td>" +
+                "<td>" + sek + "</td>");
     }
 
     private Document compileHtml() {
         String[] htmlList = htmlParts();
-        StringBuilder emptyPerCurrency = new StringBuilder((
-                "<th>" + 0 + "</th>"
-                + "<th>" + "N/A" + "</th>"
-                + "<th>" + 0 + "</th>"
-                + "<th>" + 0 + "</th>"
-                + "<th>" + 0 + "</th>"
-                + "<th>" + 0 + "</th>"));
-        StringBuilder emptyList = new StringBuilder((
-                "<td>" + 0 + "</td>"
-                + "<td>" + "N/A" + "</td>"
-                + "<td>" + 0 + "</td>"
-                + "<td>" + 0 + "</td>"
-                + "<td>" + 0 + "</td>"
-                + "<td>" + 0 + "</td>"));
-        StringBuilder[] tradesAud = new StringBuilder[] {emptyList,  emptyPerCurrency, new StringBuilder("0")};
-        StringBuilder[] tradesEur = new StringBuilder[] {emptyList,  emptyPerCurrency, new StringBuilder("0")};
-        StringBuilder[] tradesGbp = new StringBuilder[] {emptyList,  emptyPerCurrency, new StringBuilder("0")};
-        StringBuilder[] tradesUsd = new StringBuilder[] {emptyList,  emptyPerCurrency, new StringBuilder("0")};
+
+        final StringBuilder emptyPerCurrency = new StringBuilder((
+                "<th>" + 0 + "</th>" +
+                "<th>" + "N/A" + "</th>" +
+                "<th>" + 0 + "</th>" +
+                "<th>" + 0 + "</th>" +
+                "<th>" + 0 + "</th>" +
+                "<th>" + 0 + "</th>"));
+        final StringBuilder emptyList = new StringBuilder((
+                "<td>" + 0 + "</td>" +
+                "<td>" + "N/A" + "</td>" +
+                "<td>" + 0 + "</td>" +
+                "<td>" + 0 + "</td>" +
+                "<td>" + 0 + "</td>" +
+                "<td>" + 0 + "</td>"));
+
+        StringBuilder[] tradesAud = new StringBuilder[] {emptyList,  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesEur = new StringBuilder[] {emptyList,  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesGbp = new StringBuilder[] {emptyList,  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesUsd = new StringBuilder[] {emptyList,  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+
         if (!tradeListAud.isEmpty()) {
             tradesAud = insertTrades(tradeListAud);
         }
@@ -135,7 +142,17 @@ public class ResultFileCreation {
             tradesUsd = insertTrades(tradeListUsd);
         }
 
-        StringBuilder total = insertTotal(tradesAud[2], tradesEur[2], tradesGbp[2], tradesUsd[2]);
+        BigDecimal totalSek = new BigDecimal(tradesAud[3].toString())
+                .add(new BigDecimal(tradesEur[3].toString()))
+                .add(new BigDecimal(tradesGbp[3].toString()))
+                .add(new BigDecimal(tradesUsd[3].toString()));
+
+        BigDecimal totalUsd = new BigDecimal(tradesAud[4].toString())
+                .add(new BigDecimal(tradesEur[4].toString()))
+                .add(new BigDecimal(tradesGbp[4].toString()))
+                .add(new BigDecimal(tradesUsd[4].toString()));
+
+        StringBuilder total = insertTotal(tradesAud[2], tradesEur[2], tradesGbp[2], tradesUsd[2], totalSek, totalUsd);
 
         return Jsoup.parse(htmlList[0] + total + htmlList[1] +
                 htmlList[2] + tradesAud[1] + htmlList[3] + tradesAud[0] + htmlList[4] +
@@ -152,17 +169,18 @@ public class ResultFileCreation {
                 <style>
                 .tableBlock {
                 display: inline;
+                font-size: 15px;
                 }
                 .tableHead {
                 display: flex;
                 justify-content: center;
                 font-size: x-large;
+                margin-bottom: 10px;
                 }
                 div {
                 display: flex;
-                font-size: 15px;
                 }
-                th,td {
+                table,th,td {
                 border: 1px solid black;
                 text-align: center;
                 }
@@ -173,6 +191,10 @@ public class ResultFileCreation {
                 <td>Profit Before Tax</td>
                 <td>Total Tax</td>
                 <td>Profit After Tax</td>
+                <td style="width: 50px"></td>
+                <td></td>
+                <td>USD</td>
+                <td>SEK</td>
                 </tr>
                 <tr>""";
         String html1 = """
