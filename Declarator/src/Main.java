@@ -8,12 +8,12 @@ import java.time.LocalDate;
 
 public class Main {
     public static void main(String[] args) {
-        Calculation calculate = new Calculation();
+        Calculation calculation = new Calculation();
         ResultFileCreation resultFile = new ResultFileCreation();
 
         try {
 
-            calculate.calculate();
+            calculation.calculate();
             resultFile.createResultFile();
 
         } catch (Exception e) {

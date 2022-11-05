@@ -130,6 +130,7 @@ public class Calculation {
             }
             tempDate = tempDate.minusDays(1);
         }
+
         return rate;
     }
 
