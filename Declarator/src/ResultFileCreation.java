@@ -59,9 +59,8 @@ public class ResultFileCreation {
                     "<td>" + tradeCalculated.getCurrency() + "</td>" +
                     "<td>" + tradeCalculated.getSellPrice().setScale(6, RoundingMode.HALF_UP) + "</td>" +
                     "<td>" + tradeCalculated.getBuyPrice().setScale(6, RoundingMode.HALF_UP) + "</td>" +
-                    "<td>" + tradeCalculated.getResult() + "</td>" +
-                    "<td>" + tradeCalculated.getDollarResult() + "</td>");
-
+                    "<td>" + tradeCalculated.getResult() + "</td>");
+//XXX
             amountSum += tradeCalculated.getAmount();
             sellPriceSum = sellPriceSum.add(tradeCalculated.getSellPrice());
             buyPriceSum = buyPriceSum.add(tradeCalculated.getBuyPrice());
@@ -81,8 +80,7 @@ public class ResultFileCreation {
                 "<th>" + currency + "</th>" +
                 "<th>" + sellPrice.setScale(0, RoundingMode.HALF_UP) + "</th>" +
                 "<th>" + buyPrice.setScale(0, RoundingMode.HALF_UP) + "</th>" +
-                "<th>" + result.setScale(0, RoundingMode.HALF_UP) + "</th>" +
-                "<th>" + resultUsd.setScale(0, RoundingMode.HALF_UP) + "</th>"),
+                "<th>" + result.setScale(0, RoundingMode.HALF_UP) + "</th>"),
                 new StringBuilder(result.setScale(0, RoundingMode.HALF_UP).toString()),
                 new StringBuilder(result.toString()),
                 new StringBuilder(resultUsd.toString())};
@@ -115,12 +113,10 @@ public class ResultFileCreation {
                 "<th>" + "N/A" + "</th>" +
                 "<th>" + 0 + "</th>" +
                 "<th>" + 0 + "</th>" +
-                "<th>" + 0 + "</th>" +
                 "<th>" + 0 + "</th>"));
         final StringBuilder emptyList = new StringBuilder((
                 "<td>" + 0 + "</td>" +
                 "<td>" + "N/A" + "</td>" +
-                "<td>" + 0 + "</td>" +
                 "<td>" + 0 + "</td>" +
                 "<td>" + 0 + "</td>" +
                 "<td>" + 0 + "</td>"));
@@ -212,7 +208,6 @@ public class ResultFileCreation {
                 <th>Sell Price</th>
                 <th>Buy Price</th>
                 <th>Profit in SEK</th>
-                <th>Profit in USD</th>
                 </tr>
                 <tr>""";
         String html3 = """
