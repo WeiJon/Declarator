@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -153,7 +154,7 @@ public class Calculation {
     private LocalDate getFirstOpenDate(List<Trade> trades) {
         return trades.stream()
                 .min(Comparator.comparing(Trade::getOpening))
-                .orElseThrow(NoSuchElementException::new).getOpening();
+                .orElseThrow(NoSuchElementException::new).getOpening().minusDays(14);
     }
 
     private LocalDate getLastCloseDate(List<Trade> trades) {

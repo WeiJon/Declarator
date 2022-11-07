@@ -1,6 +1,7 @@
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -26,6 +27,10 @@ public class TradeRepository {
             }
 
             List<Element> tempList = new ArrayList<>(elementList.get(i).select("td"));
+
+            if (tempList.get(4).text().length() > 6) {
+                continue;
+            }
 
             tradeList.add(new Trade(
                     formatDate(tempList.get(1).text()),

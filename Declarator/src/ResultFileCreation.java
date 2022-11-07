@@ -45,7 +45,6 @@ public class ResultFileCreation {
 
     private StringBuilder[] insertTrades(List<TradeCalculated> tradeList) {
         StringBuilder totalRows = new StringBuilder();
-
         String currency = tradeList.get(0).getCurrency();
         long amountSum = 0L;
         BigDecimal sellPriceSum = BigDecimal.ZERO;
@@ -60,7 +59,7 @@ public class ResultFileCreation {
                     "<td>" + tradeCalculated.getSellPrice().setScale(6, RoundingMode.HALF_UP) + "</td>" +
                     "<td>" + tradeCalculated.getBuyPrice().setScale(6, RoundingMode.HALF_UP) + "</td>" +
                     "<td>" + tradeCalculated.getResult() + "</td>");
-//XXX
+
             amountSum += tradeCalculated.getAmount();
             sellPriceSum = sellPriceSum.add(tradeCalculated.getSellPrice());
             buyPriceSum = buyPriceSum.add(tradeCalculated.getBuyPrice());
@@ -110,13 +109,13 @@ public class ResultFileCreation {
 
         final StringBuilder emptyPerCurrency = new StringBuilder((
                 "<th>" + 0 + "</th>" +
-                "<th>" + "N/A" + "</th>" +
+                "<th>" + "-" + "</th>" +
                 "<th>" + 0 + "</th>" +
                 "<th>" + 0 + "</th>" +
                 "<th>" + 0 + "</th>"));
         final StringBuilder emptyList = new StringBuilder((
                 "<td>" + 0 + "</td>" +
-                "<td>" + "N/A" + "</td>" +
+                "<td>" + "-" + "</td>" +
                 "<td>" + 0 + "</td>" +
                 "<td>" + 0 + "</td>" +
                 "<td>" + 0 + "</td>"));
