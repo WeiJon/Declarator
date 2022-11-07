@@ -21,14 +21,15 @@ public class ResultFileCreation {
         File file = new File(pathName);
         Calculation calculation = new Calculation();
         List<TradeCalculated> tradeList = calculation.calculate();
+        String timePeriod = calculation.getTimePeriod();
 
         splitList(tradeList);
 
-        Document doc = compileHtml();
+        Document doc = compileHtml(timePeriod);
 
         FileUtils.writeStringToFile(file, String.valueOf(doc), StandardCharsets.UTF_8);
 
-        openFile(pathName);
+        openFile();
     }
 
     private void splitList(List<TradeCalculated> tradeList) {
@@ -87,7 +88,7 @@ public class ResultFileCreation {
                 new StringBuilder(resultUsd.toString())};
     }
 
-    private StringBuilder insertTotal(StringBuilder totalAud, StringBuilder totalEur, StringBuilder totalGbp, StringBuilder totalUsd, BigDecimal sek, BigDecimal usd) {
+    private StringBuilder insertTotal(StringBuilder totalAud, StringBuilder totalEur, StringBuilder totalGbp, StringBuilder totalUsd, BigDecimal sek, BigDecimal usd, String timePeriod) {
         Integer totalBefore =
                 Integer.parseInt(totalAud.toString()) +
                 Integer.parseInt(totalEur.toString()) +
@@ -97,16 +98,16 @@ public class ResultFileCreation {
         BigDecimal totalAfter = new BigDecimal(String.valueOf(totalBefore)).subtract(totalTax).setScale(2, RoundingMode.HALF_UP);
 
         return new StringBuilder(
-                "<th>" + totalBefore + " SEK" +"</th>" +
-                "<th>" + totalTax + " SEK" + "</th>" +
-                "<th>" + totalAfter + " SEK" +"</th>" +
-                "<th></th>" +
-                "<th>Add To Account: </th>" +
+                "<td>" + totalBefore + " SEK" +"</td>" +
+                "<td>" + totalTax + " SEK" + "</td>" +
+                "<td>" + totalAfter + " SEK" +"</td>" +
+                "<td>" + timePeriod + "</td>" +
+                "<th>To Account: </th>" +
                 "<td>" + usd + "</td>" +
                 "<td>" + sek + "</td>");
     }
 
-    private Document compileHtml() {
+    private Document compileHtml(String timePeriod) {
         String[] htmlList = htmlParts();
 
         final StringBuilder emptyPerCurrency = new StringBuilder((
@@ -152,7 +153,7 @@ public class ResultFileCreation {
                 .add(new BigDecimal(tradesGbp[4].toString()))
                 .add(new BigDecimal(tradesUsd[4].toString()));
 
-        StringBuilder total = insertTotal(tradesAud[2], tradesEur[2], tradesGbp[2], tradesUsd[2], totalSek, totalUsd);
+        StringBuilder total = insertTotal(tradesAud[2], tradesEur[2], tradesGbp[2], tradesUsd[2], totalSek, totalUsd, timePeriod);
 
         return Jsoup.parse(htmlList[0] + total + htmlList[1] +
                 htmlList[2] + tradesAud[1] + htmlList[3] + tradesAud[0] + htmlList[4] +
@@ -170,12 +171,13 @@ public class ResultFileCreation {
                 .tableBlock {
                 display: inline;
                 font-size: 15px;
+                margin-inline: auto;
                 }
                 .tableHead {
-                display: flex;
-                justify-content: center;
                 font-size: x-large;
                 margin-bottom: 10px;
+                margin-left: auto;
+                margin-right: auto;
                 }
                 div {
                 display: flex;
@@ -188,13 +190,13 @@ public class ResultFileCreation {
                 <body>
                 <table class=tableHead>
                 <tr>
-                <td>Profit Before Tax</td>
-                <td>Total Tax</td>
-                <td>Profit After Tax</td>
-                <td style="width: 50px"></td>
-                <td></td>
-                <td>USD</td>
-                <td>SEK</td>
+                <th>Profit Before Tax</th>
+                <th>Total Tax</th>
+                <th>Profit After Tax</th>
+                <th>Dates</th>
+                <th></th>
+                <th>USD</th>
+                <th>SEK</th>
                 </tr>
                 <tr>""";
         String html1 = """
@@ -207,7 +209,7 @@ public class ResultFileCreation {
                 <tr>
                 <th>Amount</th>
                 <th>Currency</th>
-                <th>SellPrice</th>
+                <th>Sell Price</th>
                 <th>Buy Price</th>
                 <th>Profit in SEK</th>
                 <th>Profit in USD</th>
@@ -229,8 +231,8 @@ public class ResultFileCreation {
         return new String[] {html0, html1, html2, html3, html4, html5};
     }
 
-    private static void openFile(String targetFilePath) throws IOException {
+    private void openFile() throws IOException {
         Desktop desktop = Desktop.getDesktop();
-        desktop.open(new File(targetFilePath));
+        desktop.open(new File("C:/Users/Jonas/Desktop/result.html"));
     }
 }

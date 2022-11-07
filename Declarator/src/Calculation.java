@@ -11,9 +11,9 @@ public class Calculation {
     private final TradeRepository tradeList = new TradeRepository();
     private final RateRepository rateList = new RateRepository();
 
-    public  List<TradeCalculated> calculate() throws IOException {
+    public List<TradeCalculated> calculate() throws IOException {
         List<Trade> trades = tradeList.getTrades();
-        List<Rate> rates = rateList.getRates(getRateUrl(getFirstDate(trades), getLastDate(trades)));
+        List<Rate> rates = rateList.getRates(getRateUrl(getFirstOpenDate(trades), getLastCloseDate(trades)));
         List<TradeCalculated> calculatedTrades = new ArrayList<>();
 
         for (Trade trade : trades) {
@@ -26,6 +26,10 @@ public class Calculation {
         }
 
         return calculatedTrades;
+    }
+
+    public String getTimePeriod() throws IOException {
+        return getFirstCloseDate(tradeList.getTrades()).toString() + " - " + getLastCloseDate(tradeList.getTrades()).toString();
     }
 
     private TradeCalculated calculateTrade(Rate rateOpen, Rate rateClose, Trade trade, String base, String quote) {
@@ -146,15 +150,22 @@ public class Calculation {
                 from + "&to=" + to + "&f=Day&c=cAverage&s=Dot";
     }
 
-    private LocalDate getFirstDate(List<Trade> trades) {
+    private LocalDate getFirstOpenDate(List<Trade> trades) {
         return trades.stream()
                 .min(Comparator.comparing(Trade::getOpening))
                 .orElseThrow(NoSuchElementException::new).getOpening();
     }
 
-    private LocalDate getLastDate(List<Trade> trades) {
+    private LocalDate getLastCloseDate(List<Trade> trades) {
         return trades.stream()
                 .max(Comparator.comparing(Trade::getClosing))
                 .orElseThrow(NoSuchElementException::new).getClosing();
     }
+
+    private LocalDate getFirstCloseDate(List<Trade> trades) {
+        return trades.stream()
+                .min(Comparator.comparing(Trade::getClosing))
+                .orElseThrow(NoSuchElementException::new).getClosing();
+    }
 }
+
