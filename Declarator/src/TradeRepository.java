@@ -64,18 +64,18 @@ public class TradeRepository {
     }
 
     private void addTradeMt5(List<Element> elements) {
-        for (int i = 0; i < elements.size(); i++) {
-            if (elements.get(i).select("td").hasAttr("style")
-                    && elements.get(i).select("td").size() == 1) {
+        for (Element element : elements) {
+            if (element.select("td").hasAttr("style")
+                    && element.select("td").size() == 1) {
                 break;
             }
-            if (elements.get(i).select("td").hasAttr("style")
-                    || elements.get(i).select("th").hasAttr("style")
-                    || elements.get(i).select("div").hasAttr("style")) {
+            if (element.select("td").hasAttr("style")
+                    || element.select("th").hasAttr("style")
+                    || element.select("div").hasAttr("style")) {
                 continue;
             }
 
-            List<Element> tempList = new ArrayList<>(elements.get(i).select("td"));
+            List<Element> tempList = new ArrayList<>(element.select("td"));
 
             tradeList.add(new Trade(
                     formatDate(tempList.get(0).text()),

@@ -94,7 +94,7 @@ public class Calculation {
         BigDecimal profit = sellPrice.subtract(buyPrice).setScale(6, RoundingMode.HALF_UP);
         BigDecimal dollarProfit = trade.getProfit().add(trade.getCommission().add(trade.getSwap())).setScale(2, RoundingMode.HALF_UP);
 
-        return new CalculatedTrade(amount, base.toUpperCase(), sellPrice, buyPrice, profit, dollarProfit);
+        return new CalculatedTrade(amount, base.toUpperCase(), sellPrice, buyPrice, profit, dollarProfit, trade.isMt5());
     }
 
     private CalculatedTrade addSellTrade(long amount, String base, String quote, Trade trade, BigDecimal rateOpen, BigDecimal rateClose, BigDecimal usdOpen, BigDecimal usdClose) {
@@ -118,7 +118,7 @@ public class Calculation {
         BigDecimal profit = sellPrice.subtract(buyPrice).setScale(6, RoundingMode.HALF_UP);
         BigDecimal dollarProfit = trade.getProfit().add(trade.getCommission().add(trade.getSwap())).setScale(2, RoundingMode.HALF_UP);
 
-        return new CalculatedTrade(amount, base.toUpperCase(), sellPrice, buyPrice, profit, dollarProfit);
+        return new CalculatedTrade(amount, base.toUpperCase(), sellPrice, buyPrice, profit, dollarProfit, trade.isMt5());
     }
 
     private Rate getRate(List<Rate> rates, LocalDate date) {

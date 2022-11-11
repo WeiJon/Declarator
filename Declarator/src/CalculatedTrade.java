@@ -7,16 +7,18 @@ public class CalculatedTrade {
     private BigDecimal buyPrice;
     private BigDecimal result;
     private BigDecimal dollarResult;
+    private boolean isMt5;
 
     public CalculatedTrade() {
     }
-    public CalculatedTrade(Long amount, String currency, BigDecimal sellPrice, BigDecimal buyPrice, BigDecimal result, BigDecimal dollarResult) {
+    public CalculatedTrade(Long amount, String currency, BigDecimal sellPrice, BigDecimal buyPrice, BigDecimal result, BigDecimal dollarResult, boolean isMt5) {
         this.amount = amount;
         this.currency = currency;
         this.sellPrice = sellPrice;
         this.buyPrice = buyPrice;
         this.result = result;
         this.dollarResult = dollarResult;
+        this.isMt5 = isMt5;
     }
 
     public Long getAmount() {
@@ -65,5 +67,13 @@ public class CalculatedTrade {
 
     public void setDollarResult(BigDecimal dollarResult) {
         this.dollarResult = dollarResult;
+    }
+
+    public boolean isMt5() {
+        return isMt5;
+    }
+
+    public void setMt5(boolean mt5) {
+        isMt5 = mt5;
     }
 }

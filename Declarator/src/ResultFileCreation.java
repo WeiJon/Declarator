@@ -1,6 +1,7 @@
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -46,35 +47,58 @@ public class ResultFileCreation {
     private StringBuilder[] insertTrades(List<CalculatedTrade> tradeList) {
         StringBuilder totalRows = new StringBuilder();
         String currency = tradeList.get(0).getCurrency();
+        long numberOfTrades = 1L;
         long amountSum = 0L;
         BigDecimal sellPriceSum = BigDecimal.ZERO;
         BigDecimal buyPriceSum = BigDecimal.ZERO;
         BigDecimal resultSum = BigDecimal.ZERO;
-        BigDecimal resultUsdSum = BigDecimal.ZERO;
+        BigDecimal resultSumUsd = BigDecimal.ZERO;
+        BigDecimal resultSumMt4 = BigDecimal.ZERO;
+        BigDecimal resultSumMt5 = BigDecimal.ZERO;
+        BigDecimal resultSumUsdMt4 = BigDecimal.ZERO;
+        BigDecimal resultSumUsdMt5 = BigDecimal.ZERO;
 
-        for (CalculatedTrade tradeCalculated : tradeList) {
+        for (CalculatedTrade calculatedTrade : tradeList) {
             String totalCells = (
-                    "<td>" + tradeCalculated.getAmount() + "</td>" +
-                    "<td>" + tradeCalculated.getCurrency() + "</td>" +
-                    "<td>" + tradeCalculated.getSellPrice().setScale(6, RoundingMode.HALF_UP) + "</td>" +
-                    "<td>" + tradeCalculated.getBuyPrice().setScale(6, RoundingMode.HALF_UP) + "</td>" +
-                    "<td>" + tradeCalculated.getResult() + "</td>");
+                    "<td>" + numberOfTrades + "</td>" +
+                    "<td>" + calculatedTrade.getAmount() + "</td>" +
+                    "<td>" + calculatedTrade.getCurrency() + "</td>" +
+                    "<td>" + calculatedTrade.getSellPrice().setScale(6, RoundingMode.HALF_UP) + "</td>" +
+                    "<td>" + calculatedTrade.getBuyPrice().setScale(6, RoundingMode.HALF_UP) + "</td>" +
+                    "<td>" + calculatedTrade.getResult() + "</td>");
 
-            amountSum += tradeCalculated.getAmount();
-            sellPriceSum = sellPriceSum.add(tradeCalculated.getSellPrice());
-            buyPriceSum = buyPriceSum.add(tradeCalculated.getBuyPrice());
-            resultSum = resultSum.add(tradeCalculated.getResult());
-            resultUsdSum = resultUsdSum.add(tradeCalculated.getDollarResult());
+            amountSum += calculatedTrade.getAmount();
+            sellPriceSum = sellPriceSum.add(calculatedTrade.getSellPrice());
+            buyPriceSum = buyPriceSum.add(calculatedTrade.getBuyPrice());
+            resultSum = resultSum.add(calculatedTrade.getResult());
+            resultSumUsd = resultSumUsd.add(calculatedTrade.getDollarResult());
+
+            if (!calculatedTrade.isMt5()) {
+                resultSumMt4 = resultSumMt4.add(calculatedTrade.getResult());
+                resultSumUsdMt4 = resultSumUsdMt4.add(calculatedTrade.getDollarResult());
+            } else {
+                resultSumMt5 = resultSumMt5.add(calculatedTrade.getResult());
+                resultSumUsdMt5 = resultSumUsdMt5.add(calculatedTrade.getDollarResult());
+
+            }
 
             totalRows.append("<tr>").append(totalCells).append("</tr>");
+            numberOfTrades++;
         }
-        StringBuilder[] totalPerCurrency = totalPerCurrency(amountSum, currency, sellPriceSum, buyPriceSum, resultSum, resultUsdSum);
 
-        return new StringBuilder[] {totalRows, totalPerCurrency[0], totalPerCurrency[1],totalPerCurrency[2], totalPerCurrency[3]};
+        StringBuilder sumMt4 = new StringBuilder(resultSumMt4.toString());
+        StringBuilder sumUsdMt4 = new StringBuilder(resultSumUsdMt4.toString());
+        StringBuilder sumMt5 = new StringBuilder(resultSumMt5.toString());
+        StringBuilder sumUsdMt5 = new StringBuilder(resultSumUsdMt5.toString());
+
+        StringBuilder[] totalPerCurrency = totalPerCurrency(numberOfTrades, amountSum, currency, sellPriceSum, buyPriceSum, resultSum, resultSumUsd);
+
+        return new StringBuilder[]{totalRows, totalPerCurrency[0], totalPerCurrency[1], totalPerCurrency[2], totalPerCurrency[3], sumMt4, sumUsdMt4, sumMt5, sumUsdMt5};
     }
 
-    private StringBuilder[] totalPerCurrency(long amount, String currency, BigDecimal sellPrice, BigDecimal buyPrice, BigDecimal result, BigDecimal resultUsd) {
-        return new StringBuilder[] {new StringBuilder(
+    private StringBuilder[] totalPerCurrency(long tradeCount, long amount, String currency, BigDecimal sellPrice, BigDecimal buyPrice, BigDecimal result, BigDecimal resultUsd) {
+        return new StringBuilder[]{new StringBuilder(
+                "<th>" + tradeCount + "</th>" +
                 "<th>" + amount + "</th>" +
                 "<th>" + currency + "</th>" +
                 "<th>" + sellPrice.setScale(0, RoundingMode.HALF_UP) + "</th>" +
@@ -85,37 +109,42 @@ public class ResultFileCreation {
                 new StringBuilder(resultUsd.toString())};
     }
 
-    private StringBuilder insertTotal(StringBuilder totalAud, StringBuilder totalEur, StringBuilder totalGbp, StringBuilder totalUsd, BigDecimal sek, BigDecimal usd, String timePeriod) {
+    private StringBuilder insertTotal(StringBuilder totalAud, StringBuilder totalEur, StringBuilder totalGbp, StringBuilder totalUsd,
+                                      BigDecimal sekMt4, BigDecimal usdMt4, BigDecimal sekMt5, BigDecimal usdMt5, String timePeriod) {
         Integer totalBefore =
                 Integer.parseInt(totalAud.toString()) +
-                Integer.parseInt(totalEur.toString()) +
-                Integer.parseInt(totalGbp.toString()) +
-                Integer.parseInt(totalUsd.toString());
+                        Integer.parseInt(totalEur.toString()) +
+                        Integer.parseInt(totalGbp.toString()) +
+                        Integer.parseInt(totalUsd.toString());
         BigDecimal totalTax = new BigDecimal(totalBefore * 0.3).setScale(2, RoundingMode.HALF_UP);
         BigDecimal totalAfter = new BigDecimal(String.valueOf(totalBefore)).subtract(totalTax).setScale(2, RoundingMode.HALF_UP);
 
         return new StringBuilder(
-                "<td>" + totalBefore + " SEK" +"</td>" +
+                "<td>" + totalBefore + " SEK" + "</td>" +
                 "<td>" + totalTax + " SEK" + "</td>" +
-                "<td>" + totalAfter + " SEK" +"</td>" +
+                "<td>" + totalAfter + " SEK" + "</td>" +
                 "<td>" + timePeriod + "</td>" +
-                "<th>To Account: </th>" +
-                "<td>" + usd + "</td>" +
-                "<td>" + sek + "</td>");
+                "<th>MetaTrader 4:</th>" +
+                "<td>" + usdMt4 + "</td>" +
+                "<td>" + sekMt4 + "</td>" +
+                "<th>MetaTrader 5:</th>" +
+                "<td>" + usdMt5 + "</td>" +
+                "<td>" + sekMt5 + "</td>");
     }
 
     private Document compileHtml(String timePeriod) {
         final StringBuilder emptyPerCurrency = new StringBuilder((
+                "<th>" + 0 + "</th>" +
                 "<th>" + 0 + "</th>" +
                 "<th>" + "-" + "</th>" +
                 "<th>" + 0 + "</th>" +
                 "<th>" + 0 + "</th>" +
                 "<th>" + 0 + "</th>"));
 
-        StringBuilder[] tradesAud = new StringBuilder[] {new StringBuilder(),  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
-        StringBuilder[] tradesEur = new StringBuilder[] {new StringBuilder(),  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
-        StringBuilder[] tradesGbp = new StringBuilder[] {new StringBuilder(),  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
-        StringBuilder[] tradesUsd = new StringBuilder[] {new StringBuilder(),  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesAud = new StringBuilder[]{new StringBuilder(), emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesEur = new StringBuilder[]{new StringBuilder(), emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesGbp = new StringBuilder[]{new StringBuilder(), emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesUsd = new StringBuilder[]{new StringBuilder(), emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
 
         if (!tradeListAud.isEmpty()) {
             tradesAud = insertTrades(tradeListAud);
@@ -130,17 +159,27 @@ public class ResultFileCreation {
             tradesUsd = insertTrades(tradeListUsd);
         }
 
-        BigDecimal totalSek = new BigDecimal(tradesAud[3].toString())
-                .add(new BigDecimal(tradesEur[3].toString()))
-                .add(new BigDecimal(tradesGbp[3].toString()))
-                .add(new BigDecimal(tradesUsd[3].toString()));
+        BigDecimal totalSekMt4 = new BigDecimal(tradesAud[5].toString())
+                .add(new BigDecimal(tradesEur[5].toString()))
+                .add(new BigDecimal(tradesGbp[5].toString()))
+                .add(new BigDecimal(tradesUsd[5].toString()));
 
-        BigDecimal totalUsd = new BigDecimal(tradesAud[4].toString())
-                .add(new BigDecimal(tradesEur[4].toString()))
-                .add(new BigDecimal(tradesGbp[4].toString()))
-                .add(new BigDecimal(tradesUsd[4].toString()));
+        BigDecimal totalUsdMt4 = new BigDecimal(tradesAud[6].toString())
+                .add(new BigDecimal(tradesEur[6].toString()))
+                .add(new BigDecimal(tradesGbp[6].toString()))
+                .add(new BigDecimal(tradesUsd[6].toString()));
 
-        StringBuilder total = insertTotal(tradesAud[2], tradesEur[2], tradesGbp[2], tradesUsd[2], totalSek, totalUsd, timePeriod);
+        BigDecimal totalSekMt5 = new BigDecimal(tradesAud[7].toString())
+                .add(new BigDecimal(tradesEur[7].toString()))
+                .add(new BigDecimal(tradesGbp[7].toString()))
+                .add(new BigDecimal(tradesUsd[7].toString()));
+
+        BigDecimal totalUsdMt5 = new BigDecimal(tradesAud[8].toString())
+                .add(new BigDecimal(tradesEur[8].toString()))
+                .add(new BigDecimal(tradesGbp[8].toString()))
+                .add(new BigDecimal(tradesUsd[8].toString()));
+
+        StringBuilder total = insertTotal(tradesAud[2], tradesEur[2], tradesGbp[2], tradesUsd[2], totalSekMt4, totalUsdMt4, totalSekMt5, totalUsdMt5, timePeriod);
 
         String[] htmlList = htmlParts();
 
@@ -165,6 +204,7 @@ public class ResultFileCreation {
                 .tableHead {
                 font-size: x-large;
                 margin-bottom: 10px;
+                margin-top: 10px;
                 margin-left: auto;
                 margin-right: auto;
                 }
@@ -186,6 +226,9 @@ public class ResultFileCreation {
                 <th></th>
                 <th>USD</th>
                 <th>SEK</th>
+                <th></th>
+                <th>USD</th>
+                <th>SEK</th>
                 </tr>
                 <tr>""";
         String html1 = """
@@ -196,6 +239,7 @@ public class ResultFileCreation {
                 <table class="tableBlock">
                 <tbody>
                 <tr>
+                <th>No.</th>
                 <th>Amount</th>
                 <th>Currency</th>
                 <th>Sell Price</th>
@@ -216,7 +260,7 @@ public class ResultFileCreation {
                 </tbody>
                 </html>""";
 
-        return new String[] {html0, html1, html2, html3, html4, html5};
+        return new String[]{html0, html1, html2, html3, html4, html5};
     }
 
     private void openFile() throws IOException {
