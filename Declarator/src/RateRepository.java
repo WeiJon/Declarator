@@ -17,6 +17,10 @@ public class RateRepository {
 
         for (int i = 2; i < elementList.size(); i++) {
             List<Element> tempList = new ArrayList<>(elementList.get(i).select("td"));
+            if (tempList.get(1).text().equals("n/a")) {
+                continue;
+            }
+
             rateList.add(new Rate(LocalDate.parse(tempList.get(0).text()),
                     new BigDecimal(tempList.get(1).text()),
                     new BigDecimal(tempList.get(2).text()),

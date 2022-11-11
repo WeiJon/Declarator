@@ -10,25 +10,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TradeRepository {
-    public List<Trade> getTrades() throws IOException {
-        final File file = new File("C:/Users/Jonas/Desktop/Statement.htm");
-        final Document document = Jsoup.parse(file, "UTF-8");
-        List<Element> elementList = new ArrayList<>(document.select("table tr"));
-        List<Trade> tradeList = new ArrayList<>();
+    private final List<Trade> tradeList = new ArrayList<>();
 
-        for (int i = 3; i < elementList.size(); i++) {
-            if (elementList.get(i).select("td").hasClass("msdate")
-                    && elementList.get(i).select("td").hasAttr("colspan")) {
+    public List<Trade> getTrades() throws IOException {
+        final File fileMt4 = new File("C:/Users/Jonas/Desktop/Statement.htm");
+        final File fileMt5 = new File("C:/Program Files/MetaTrader 5 IC Markets (SC)/MQL5/Presets/ReportHistory-5330507.html");
+
+        final Document documentMt4 = fileMt4.exists() ? Jsoup.parse(fileMt4, "UTF-8") : null;
+        final Document documentMt5 = fileMt5.exists() ? Jsoup.parse(fileMt5, "UTF-8") : null;
+
+        if (documentMt4 != null) {
+            List<Element> elementListMt4 = new ArrayList<>(documentMt4.select("table tr"));
+            addTradeMt4(elementListMt4);
+        }
+        if (documentMt5 != null) {
+            List<Element> elementListMt5 = new ArrayList<>(documentMt5.select("table tr"));
+            addTradeMt5(elementListMt5);
+        }
+
+        return tradeList;
+    }
+
+    private void addTradeMt4(List<Element> elements) {
+        for (int i = 3; i < elements.size(); i++) {
+            if (elements.get(i).select("td").hasClass("msdate")
+                    && elements.get(i).select("td").hasAttr("colspan")) {
                 continue;
             }
-            if (elementList.get(i).select("td").hasClass("mspt")
-                    && elementList.get(i).select("td").hasAttr("colspan")) {
+            if (elements.get(i).select("td").hasClass("mspt")
+                    && elements.get(i).select("td").hasAttr("colspan")) {
                 break;
             }
 
-            List<Element> tempList = new ArrayList<>(elementList.get(i).select("td"));
+            List<Element> tempList = new ArrayList<>(elements.get(i).select("td"));
 
-            if (tempList.get(4).text().length() > 6) {
+            if (tempList.get(4).text().length() != 6) {
                 continue;
             }
 
@@ -42,10 +58,38 @@ public class TradeRepository {
                     new BigDecimal(tempList.get(9).text()),
                     new BigDecimal(tempList.get(10).text()),
                     new BigDecimal(tempList.get(12).text()),
-                    new BigDecimal(tempList.get(13).text())));
+                    new BigDecimal(tempList.get(13).text()),
+                    false));
         }
+    }
 
-        return tradeList;
+    private void addTradeMt5(List<Element> elements) {
+        for (int i = 0; i < elements.size(); i++) {
+            if (elements.get(i).select("td").hasAttr("style")
+                    && elements.get(i).select("td").size() == 1) {
+                break;
+            }
+            if (elements.get(i).select("td").hasAttr("style")
+                    || elements.get(i).select("th").hasAttr("style")
+                    || elements.get(i).select("div").hasAttr("style")) {
+                continue;
+            }
+
+            List<Element> tempList = new ArrayList<>(elements.get(i).select("td"));
+
+            tradeList.add(new Trade(
+                    formatDate(tempList.get(0).text()),
+                    tempList.get(3).text(),
+                    new BigDecimal(tempList.get(5).text()),
+                    tempList.get(2).text(),
+                    new BigDecimal(tempList.get(6).text()),
+                    formatDate(tempList.get(9).text()),
+                    new BigDecimal(tempList.get(10).text()),
+                    new BigDecimal(tempList.get(11).text()),
+                    new BigDecimal(tempList.get(12).text()),
+                    new BigDecimal(tempList.get(13).text()),
+                    true));
+        }
     }
 
     private LocalDate formatDate(String dateString) {

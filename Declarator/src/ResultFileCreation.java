@@ -105,25 +105,17 @@ public class ResultFileCreation {
     }
 
     private Document compileHtml(String timePeriod) {
-        String[] htmlList = htmlParts();
-
         final StringBuilder emptyPerCurrency = new StringBuilder((
                 "<th>" + 0 + "</th>" +
                 "<th>" + "-" + "</th>" +
                 "<th>" + 0 + "</th>" +
                 "<th>" + 0 + "</th>" +
                 "<th>" + 0 + "</th>"));
-        final StringBuilder emptyList = new StringBuilder((
-                "<td>" + 0 + "</td>" +
-                "<td>" + "-" + "</td>" +
-                "<td>" + 0 + "</td>" +
-                "<td>" + 0 + "</td>" +
-                "<td>" + 0 + "</td>"));
 
-        StringBuilder[] tradesAud = new StringBuilder[] {emptyList,  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
-        StringBuilder[] tradesEur = new StringBuilder[] {emptyList,  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
-        StringBuilder[] tradesGbp = new StringBuilder[] {emptyList,  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
-        StringBuilder[] tradesUsd = new StringBuilder[] {emptyList,  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesAud = new StringBuilder[] {new StringBuilder(),  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesEur = new StringBuilder[] {new StringBuilder(),  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesGbp = new StringBuilder[] {new StringBuilder(),  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesUsd = new StringBuilder[] {new StringBuilder(),  emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
 
         if (!tradeListAud.isEmpty()) {
             tradesAud = insertTrades(tradeListAud);
@@ -149,6 +141,8 @@ public class ResultFileCreation {
                 .add(new BigDecimal(tradesUsd[4].toString()));
 
         StringBuilder total = insertTotal(tradesAud[2], tradesEur[2], tradesGbp[2], tradesUsd[2], totalSek, totalUsd, timePeriod);
+
+        String[] htmlList = htmlParts();
 
         return Jsoup.parse(htmlList[0] + total + htmlList[1] +
                 htmlList[2] + tradesAud[1] + htmlList[3] + tradesAud[0] + htmlList[4] +

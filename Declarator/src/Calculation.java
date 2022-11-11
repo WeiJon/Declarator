@@ -17,8 +17,8 @@ public class Calculation {
         List<CalculatedTrade> calculatedTrades = new ArrayList<>();
 
         for (Trade trade : trades) {
-            String baseCurrency = splitPair(trade.getPair())[0];
-            String quoteCurrency = splitPair(trade.getPair())[1];
+            String baseCurrency = splitPair(trade.getPair())[0].toUpperCase();
+            String quoteCurrency = splitPair(trade.getPair())[1].toUpperCase();
             Rate rateOpen = getRate(rates, trade.getOpening());
             Rate rateClose = getRate(rates, trade.getClosing());
 
@@ -40,61 +40,56 @@ public class Calculation {
         BigDecimal usdClose = rateClose.getUsd();
 
         switch (quote) {
-            case "cad" -> {
+            case "CAD" -> {
                 BigDecimal open = rateOpen.getCad();
                 BigDecimal close = rateClose.getCad();
 
-                if (trade.getDirection().equals("buy")) {
-                    tradeNew = addBuyTrade(amount, base, trade, open, close, usdOpen, usdClose, quote);
-                } else {
-                    tradeNew = addSellTrade(amount, base, trade, open, close, usdOpen, usdClose, quote);
-                }
+                tradeNew = trade.getDirection().equals("buy") ? addBuyTrade(amount, base, quote, trade, open, close, usdOpen, usdClose)
+                        : addSellTrade(amount, base, quote, trade, open, close, usdOpen, usdClose);
             }
-            case "chf" -> {
+            case "CHF" -> {
                 BigDecimal open = rateOpen.getChf();
                 BigDecimal close = rateClose.getChf();
 
-                if (trade.getDirection().equals("buy")) {
-                    tradeNew = addBuyTrade(amount, base, trade, open, close, usdOpen, usdClose, quote);
-                } else {
-                    tradeNew = addSellTrade(amount, base, trade, open, close, usdOpen, usdClose, quote);
-                }
+                tradeNew = trade.getDirection().equals("buy") ? addBuyTrade(amount, base, quote, trade, open, close, usdOpen, usdClose)
+                        : addSellTrade(amount, base, quote, trade, open, close, usdOpen, usdClose);
             }
-            case "jpy" -> {
+            case "JPY" -> {
                 BigDecimal open = rateOpen.getJpy();
                 BigDecimal close = rateClose.getJpy();
 
-                if (trade.getDirection().equals("buy")) {
-                    tradeNew = addBuyTrade(amount, base, trade, open, close, usdOpen, usdClose, quote);
-                } else {
-                    tradeNew = addSellTrade(amount, base, trade, open, close, usdOpen, usdClose, quote);
-                }
+                tradeNew = trade.getDirection().equals("buy") ? addBuyTrade(amount, base, quote, trade, open, close, usdOpen, usdClose)
+                        : addSellTrade(amount, base, quote, trade, open, close, usdOpen, usdClose);
             }
-            case "usd" -> {
+            case "USD" -> {
                 BigDecimal open = rateOpen.getUsd();
                 BigDecimal close = rateClose.getUsd();
 
-                if (trade.getDirection().equals("buy")) {
-                    tradeNew = addBuyTrade(amount, base, trade, open, close, usdOpen, usdClose, quote);
-                } else {
-                    tradeNew = addSellTrade(amount, base, trade, open, close, usdOpen, usdClose, quote);
-                }
+                tradeNew = trade.getDirection().equals("buy") ? addBuyTrade(amount, base, quote, trade, open, close, usdOpen, usdClose)
+                        : addSellTrade(amount, base, quote, trade, open, close, usdOpen, usdClose);
             }
         }
 
         return tradeNew;
     }
 
-    private CalculatedTrade addBuyTrade(long amount, String base, Trade trade, BigDecimal rateOpen, BigDecimal rateClose, BigDecimal usdOpen, BigDecimal usdClose, String quote) {
-        if (quote.equals("chf") || quote.equals("jpy")) {
+    private CalculatedTrade addBuyTrade(long amount, String base, String quote, Trade trade, BigDecimal rateOpen, BigDecimal rateClose, BigDecimal usdOpen, BigDecimal usdClose) {
+        BigDecimal commission = trade.getCommission().multiply(usdOpen);
+
+        if (quote.equals("CHF") || quote.equals("JPY")) {
             final BigDecimal rateDivider = new BigDecimal("100");
-            rateOpen = rateOpen.divide(rateDivider, 9, RoundingMode.HALF_UP);
-            rateClose = rateClose.divide(rateDivider, 9, RoundingMode.HALF_UP);
+            rateOpen = rateOpen.divide(rateDivider, 9, RoundingMode.UNNECESSARY);
+            rateClose = rateClose.divide(rateDivider, 9, RoundingMode.UNNECESSARY);
+        }
+        if (trade.isMt5()) {
+            final BigDecimal commissionDivider = new BigDecimal("2");
+            commission = trade.getCommission().divide(commissionDivider, RoundingMode.UNNECESSARY).multiply(usdOpen)
+                    .add(trade.getCommission().divide(commissionDivider, RoundingMode.UNNECESSARY).multiply(usdClose));
         }
 
-        BigDecimal sellPrice = trade.getPriceClose().multiply(new BigDecimal(amount)).multiply(rateClose);
+        BigDecimal sellPrice = trade.getPriceClose().multiply(new BigDecimal(amount).multiply(rateClose));
         BigDecimal buyPrice = trade.getPriceOpen().multiply(new BigDecimal(amount).multiply(rateOpen))
-                .subtract((trade.getCommission().multiply(usdOpen)).add(trade.getSwap().multiply(usdClose)));
+                .subtract(commission.add(trade.getSwap().multiply(usdClose)));
 
         BigDecimal profit = sellPrice.subtract(buyPrice).setScale(6, RoundingMode.HALF_UP);
         BigDecimal dollarProfit = trade.getProfit().add(trade.getCommission().add(trade.getSwap())).setScale(2, RoundingMode.HALF_UP);
@@ -102,16 +97,23 @@ public class Calculation {
         return new CalculatedTrade(amount, base.toUpperCase(), sellPrice, buyPrice, profit, dollarProfit);
     }
 
-    private CalculatedTrade addSellTrade(long amount, String base, Trade trade, BigDecimal rateOpen, BigDecimal rateClose, BigDecimal usdOpen, BigDecimal usdClose, String quote) {
-        if (quote.equals("chf") || quote.equals("jpy")) {
+    private CalculatedTrade addSellTrade(long amount, String base, String quote, Trade trade, BigDecimal rateOpen, BigDecimal rateClose, BigDecimal usdOpen, BigDecimal usdClose) {
+        BigDecimal commission = trade.getCommission().multiply(usdOpen);
+
+        if (quote.equals("CHF") || quote.equals("JPY")) {
             final BigDecimal rateDivider = new BigDecimal("100");
-            rateOpen = rateOpen.divide(rateDivider, 9, RoundingMode.HALF_UP);
-            rateClose = rateClose.divide(rateDivider, 9, RoundingMode.HALF_UP);
+            rateOpen = rateOpen.divide(rateDivider, 9, RoundingMode.UNNECESSARY);
+            rateClose = rateClose.divide(rateDivider, 9, RoundingMode.UNNECESSARY);
+        }
+        if (trade.isMt5()) {
+            final BigDecimal commissionDivider = new BigDecimal("2");
+            commission = trade.getCommission().divide(commissionDivider, RoundingMode.UNNECESSARY).multiply(usdOpen)
+                    .add(trade.getCommission().divide(commissionDivider, RoundingMode.UNNECESSARY).multiply(usdClose));
         }
 
         BigDecimal sellPrice = trade.getPriceOpen().multiply(new BigDecimal(amount).multiply(rateOpen));
         BigDecimal buyPrice = trade.getPriceClose().multiply(new BigDecimal(amount).multiply(rateClose))
-                .subtract((trade.getCommission().multiply(usdOpen)).add(trade.getSwap().multiply(usdClose)));
+                .subtract(commission.add(trade.getSwap().multiply(usdClose)));
 
         BigDecimal profit = sellPrice.subtract(buyPrice).setScale(6, RoundingMode.HALF_UP);
         BigDecimal dollarProfit = trade.getProfit().add(trade.getCommission().add(trade.getSwap())).setScale(2, RoundingMode.HALF_UP);

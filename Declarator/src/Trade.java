@@ -12,12 +12,12 @@ public class Trade {
     private BigDecimal commission;
     private BigDecimal swap;
     private BigDecimal profitInUsd;
-
+    private boolean isMt5;
 
     public Trade() {
     }
-    public Trade(LocalDate opening, String direction, BigDecimal lotSize, String pair, BigDecimal priceOpen,
-                 LocalDate closing, BigDecimal priceClose, BigDecimal commission, BigDecimal swap, BigDecimal profit) {
+    public Trade(LocalDate opening, String direction, BigDecimal lotSize, String pair, BigDecimal priceOpen, LocalDate closing,
+                 BigDecimal priceClose, BigDecimal commission, BigDecimal swap, BigDecimal profit, boolean isMt5) {
         this.opening = opening;
         this.direction = direction;
         this.lotSize = lotSize;
@@ -28,6 +28,7 @@ public class Trade {
         this.commission = commission;
         this.swap = swap;
         this.profitInUsd = profit;
+        this.isMt5 = isMt5;
     }
 
     public LocalDate getOpening() {
@@ -110,4 +111,19 @@ public class Trade {
         this.profitInUsd = profit;
     }
 
+    public BigDecimal getProfitInUsd() {
+        return profitInUsd;
+    }
+
+    public void setProfitInUsd(BigDecimal profitInUsd) {
+        this.profitInUsd = profitInUsd;
+    }
+
+    public boolean isMt5() {
+        return isMt5;
+    }
+
+    public void setMt5(boolean mt5) {
+        isMt5 = mt5;
+    }
 }
