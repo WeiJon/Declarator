@@ -52,7 +52,6 @@ public class ResultFileCreation {
         BigDecimal sellPriceSum = BigDecimal.ZERO;
         BigDecimal buyPriceSum = BigDecimal.ZERO;
         BigDecimal resultSum = BigDecimal.ZERO;
-        BigDecimal resultSumUsd = BigDecimal.ZERO;
         BigDecimal resultSumMt4 = BigDecimal.ZERO;
         BigDecimal resultSumMt5 = BigDecimal.ZERO;
         BigDecimal resultSumUsdMt4 = BigDecimal.ZERO;
@@ -71,7 +70,6 @@ public class ResultFileCreation {
             sellPriceSum = sellPriceSum.add(calculatedTrade.getSellPrice());
             buyPriceSum = buyPriceSum.add(calculatedTrade.getBuyPrice());
             resultSum = resultSum.add(calculatedTrade.getResult());
-            resultSumUsd = resultSumUsd.add(calculatedTrade.getDollarResult());
 
             if (!calculatedTrade.isMt5()) {
                 resultSumMt4 = resultSumMt4.add(calculatedTrade.getResult());
