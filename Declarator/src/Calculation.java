@@ -27,11 +27,6 @@ public class Calculation {
 
         return calculatedTrades;
     }
-
-    public String getTimePeriod() throws IOException {
-        return getFirstCloseDate(tradeList.getTrades()).toString() + " - " + getLastCloseDate(tradeList.getTrades()).toString();
-    }
-
     private CalculatedTrade calculateTrade(Rate rateOpen, Rate rateClose, Trade trade, String base, String quote) {
         final long lotMultiplier = 100000L;
         long amount = trade.getLotSize().multiply(new BigDecimal(lotMultiplier)).longValue();
@@ -168,6 +163,10 @@ public class Calculation {
         return trades.stream()
                 .min(Comparator.comparing(Trade::getClosing))
                 .orElseThrow(NoSuchElementException::new).getClosing();
+    }
+
+    public String getTimePeriod() throws IOException {
+        return getFirstCloseDate(tradeList.getTrades()).toString() + " - " + getLastCloseDate(tradeList.getTrades()).toString();
     }
 }
 
