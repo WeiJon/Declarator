@@ -11,16 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResultFileCreation {
-    private final List<TradeCalculated> tradeListAud = new ArrayList<>();
-    private final List<TradeCalculated> tradeListEur = new ArrayList<>();
-    private final List<TradeCalculated> tradeListGbp = new ArrayList<>();
-    private final List<TradeCalculated> tradeListUsd = new ArrayList<>();
+    private final List<CalculatedTrade> tradeListAud = new ArrayList<>();
+    private final List<CalculatedTrade> tradeListEur = new ArrayList<>();
+    private final List<CalculatedTrade> tradeListGbp = new ArrayList<>();
+    private final List<CalculatedTrade> tradeListUsd = new ArrayList<>();
 
     public void createResultFile() throws IOException {
         final String pathName = "C:/Users/Jonas/Desktop/result.html";
         File file = new File(pathName);
         Calculation calculation = new Calculation();
-        List<TradeCalculated> tradeList = calculation.calculate();
+        List<CalculatedTrade> tradeList = calculation.calculate();
         String timePeriod = calculation.getTimePeriod();
 
         splitList(tradeList);
@@ -32,8 +32,8 @@ public class ResultFileCreation {
         openFile();
     }
 
-    private void splitList(List<TradeCalculated> tradeList) {
-        for (TradeCalculated trade : tradeList) {
+    private void splitList(List<CalculatedTrade> tradeList) {
+        for (CalculatedTrade trade : tradeList) {
             switch (trade.getCurrency()) {
                 case "AUD" -> tradeListAud.add(trade);
                 case "EUR" -> tradeListEur.add(trade);
@@ -43,7 +43,7 @@ public class ResultFileCreation {
         }
     }
 
-    private StringBuilder[] insertTrades(List<TradeCalculated> tradeList) {
+    private StringBuilder[] insertTrades(List<CalculatedTrade> tradeList) {
         StringBuilder totalRows = new StringBuilder();
         String currency = tradeList.get(0).getCurrency();
         long amountSum = 0L;
@@ -52,7 +52,7 @@ public class ResultFileCreation {
         BigDecimal resultSum = BigDecimal.ZERO;
         BigDecimal resultUsdSum = BigDecimal.ZERO;
 
-        for (TradeCalculated tradeCalculated : tradeList) {
+        for (CalculatedTrade tradeCalculated : tradeList) {
             String totalCells = (
                     "<td>" + tradeCalculated.getAmount() + "</td>" +
                     "<td>" + tradeCalculated.getCurrency() + "</td>" +

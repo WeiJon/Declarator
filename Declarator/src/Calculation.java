@@ -11,10 +11,10 @@ public class Calculation {
     private final TradeRepository tradeList = new TradeRepository();
     private final RateRepository rateList = new RateRepository();
 
-    public List<TradeCalculated> calculate() throws IOException {
+    public List<CalculatedTrade> calculate() throws IOException {
         List<Trade> trades = tradeList.getTrades();
         List<Rate> rates = rateList.getRates(getRateUrl(getFirstOpenDate(trades), getLastCloseDate(trades)));
-        List<TradeCalculated> calculatedTrades = new ArrayList<>();
+        List<CalculatedTrade> calculatedTrades = new ArrayList<>();
 
         for (Trade trade : trades) {
             String baseCurrency = splitPair(trade.getPair())[0];
@@ -32,10 +32,10 @@ public class Calculation {
         return getFirstCloseDate(tradeList.getTrades()).toString() + " - " + getLastCloseDate(tradeList.getTrades()).toString();
     }
 
-    private TradeCalculated calculateTrade(Rate rateOpen, Rate rateClose, Trade trade, String base, String quote) {
+    private CalculatedTrade calculateTrade(Rate rateOpen, Rate rateClose, Trade trade, String base, String quote) {
         final long lotMultiplier = 100000L;
         long amount = trade.getLotSize().multiply(new BigDecimal(lotMultiplier)).longValue();
-        TradeCalculated tradeNew = new TradeCalculated();
+        CalculatedTrade tradeNew = new CalculatedTrade();
         BigDecimal usdOpen = rateOpen.getUsd();
         BigDecimal usdClose = rateClose.getUsd();
 
@@ -85,7 +85,7 @@ public class Calculation {
         return tradeNew;
     }
 
-    private TradeCalculated addBuyTrade(long amount, String base, Trade trade, BigDecimal rateOpen, BigDecimal rateClose, BigDecimal usdOpen, BigDecimal usdClose, String quote) {
+    private CalculatedTrade addBuyTrade(long amount, String base, Trade trade, BigDecimal rateOpen, BigDecimal rateClose, BigDecimal usdOpen, BigDecimal usdClose, String quote) {
         if (quote.equals("chf") || quote.equals("jpy")) {
             final BigDecimal rateDivider = new BigDecimal("100");
             rateOpen = rateOpen.divide(rateDivider, 9, RoundingMode.HALF_UP);
@@ -99,10 +99,10 @@ public class Calculation {
         BigDecimal profit = sellPrice.subtract(buyPrice).setScale(6, RoundingMode.HALF_UP);
         BigDecimal dollarProfit = trade.getProfit().add(trade.getCommission().add(trade.getSwap())).setScale(2, RoundingMode.HALF_UP);
 
-        return new TradeCalculated(amount, base.toUpperCase(), sellPrice, buyPrice, profit, dollarProfit);
+        return new CalculatedTrade(amount, base.toUpperCase(), sellPrice, buyPrice, profit, dollarProfit);
     }
 
-    private TradeCalculated addSellTrade(long amount, String base, Trade trade, BigDecimal rateOpen, BigDecimal rateClose, BigDecimal usdOpen, BigDecimal usdClose, String quote) {
+    private CalculatedTrade addSellTrade(long amount, String base, Trade trade, BigDecimal rateOpen, BigDecimal rateClose, BigDecimal usdOpen, BigDecimal usdClose, String quote) {
         if (quote.equals("chf") || quote.equals("jpy")) {
             final BigDecimal rateDivider = new BigDecimal("100");
             rateOpen = rateOpen.divide(rateDivider, 9, RoundingMode.HALF_UP);
@@ -116,7 +116,7 @@ public class Calculation {
         BigDecimal profit = sellPrice.subtract(buyPrice).setScale(6, RoundingMode.HALF_UP);
         BigDecimal dollarProfit = trade.getProfit().add(trade.getCommission().add(trade.getSwap())).setScale(2, RoundingMode.HALF_UP);
 
-        return new TradeCalculated(amount, base.toUpperCase(), sellPrice, buyPrice, profit, dollarProfit);
+        return new CalculatedTrade(amount, base.toUpperCase(), sellPrice, buyPrice, profit, dollarProfit);
     }
 
     private Rate getRate(List<Rate> rates, LocalDate date) {
