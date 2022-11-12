@@ -148,18 +148,27 @@ public class Calculation {
     }
 
     private LocalDate getFirstOpenDate(List<Trade> trades) {
+        if (trades.isEmpty()) {
+            return LocalDate.now();
+        }
         return trades.stream()
                 .min(Comparator.comparing(Trade::getOpening))
                 .orElseThrow(NoSuchElementException::new).getOpening().minusDays(14);
     }
 
     private LocalDate getLastCloseDate(List<Trade> trades) {
+        if (trades.isEmpty()) {
+            return LocalDate.now();
+        }
         return trades.stream()
                 .max(Comparator.comparing(Trade::getClosing))
                 .orElseThrow(NoSuchElementException::new).getClosing();
     }
 
     private LocalDate getFirstCloseDate(List<Trade> trades) {
+        if (trades.isEmpty()) {
+            return LocalDate.now();
+        }
         return trades.stream()
                 .min(Comparator.comparing(Trade::getClosing))
                 .orElseThrow(NoSuchElementException::new).getClosing();

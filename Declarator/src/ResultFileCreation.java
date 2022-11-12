@@ -141,10 +141,14 @@ public class ResultFileCreation {
                 "<th>" + 0 + "</th>" +
                 "<th>" + 0 + "</th>"));
 
-        StringBuilder[] tradesAud = new StringBuilder[]{new StringBuilder(), emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
-        StringBuilder[] tradesEur = new StringBuilder[]{new StringBuilder(), emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
-        StringBuilder[] tradesGbp = new StringBuilder[]{new StringBuilder(), emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
-        StringBuilder[] tradesUsd = new StringBuilder[]{new StringBuilder(), emptyPerCurrency, new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesAud = new StringBuilder[]{new StringBuilder(), emptyPerCurrency, new StringBuilder("0"),
+                new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesEur = new StringBuilder[]{new StringBuilder(), emptyPerCurrency, new StringBuilder("0"),
+                new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesGbp = new StringBuilder[]{new StringBuilder(), emptyPerCurrency, new StringBuilder("0"),
+                new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
+        StringBuilder[] tradesUsd = new StringBuilder[]{new StringBuilder(), emptyPerCurrency, new StringBuilder("0"),
+                new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0"), new StringBuilder("0")};
 
         if (!tradeListAud.isEmpty()) {
             tradesAud = insertTrades(tradeListAud);
@@ -196,6 +200,9 @@ public class ResultFileCreation {
                 <html>
                 <head></head>
                 <style>
+                body {
+                background-color: dimgrey;
+                }
                 .tableBlock {
                 display: inline;
                 font-size: 15px;
@@ -214,6 +221,7 @@ public class ResultFileCreation {
                 table,th,td {
                 border: 1px solid black;
                 text-align: center;
+                background-color: white;
                 }
                 </style>
                 <body>
@@ -234,10 +242,12 @@ public class ResultFileCreation {
                 <th>SEK</th>
                 </tr>
                 <tr>""";
+
         String html1 = """
                 </tr>
                 </table>
                 <div>""";
+
         String html2 = """
                 <table class="tableBlock">
                 <tbody>
@@ -250,14 +260,17 @@ public class ResultFileCreation {
                 <th>Profit in SEK</th>
                 </tr>
                 <tr>""";
+
         String html3 = """
                 </tr>
                 </tbody>
                 <tbody>""";
+
         String html4 = """
                 </tbody>
                 </table>
                 """;
+
         String html5 = """
                 </div>
                 </tbody>
