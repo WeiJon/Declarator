@@ -14,7 +14,7 @@ public class TradeRepository {
 
     public List<Trade> getTrades() throws IOException {
         final File fileMt4 = new File("C:/Users/Jonas/Desktop/Statement.htm");
-        final File fileMt5 = new File("C:/Program Files/MetaTrader 5 IC Markets (SC)/MQL5/Presets/ReportHistory-5330507.html");
+        final File fileMt5 = new File("C:/Program Files/MetaTrader 5 IC Markets (SC)/MQL5/Report/ReportHistory-5330507.html");
 
         final Document documentMt4 = fileMt4.exists() ? Jsoup.parse(fileMt4, "UTF-8") : null;
         final Document documentMt5 = fileMt5.exists() ? Jsoup.parse(fileMt5, "UTF-8") : null;
