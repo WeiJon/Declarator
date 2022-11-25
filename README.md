@@ -3,7 +3,7 @@
 I wrote this program partly to practice coding after graduating from AW Academy's Java bootcamp, 
 but I also had the need to simplify tax calculations for automated forex trading.
 
-
+Download and put the files from the demo-folder into the same folder and try the program out!
 
 Functional overview
 
@@ -18,3 +18,5 @@ Functional overview
 9. This new list is then returned to another class that splits the list into four new list based on what the trade's base currency is.
 10. After this the trades from the four lists of trades are converted to strings and inserted to tables (along with other information such as the sum of the amounts and prices, and also the affected time period etc.) which are then compiled to a html-file with hard coded html structure and styling.
 11. The created html-file is the executed and all the information is presented in a web browser.
+
+
