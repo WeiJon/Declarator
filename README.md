@@ -3,7 +3,7 @@
 I wrote this program partly to practice coding after graduating from AW Academy's Java bootcamp, 
 but I also had the need to simplify my tax calculations for automated forex trading.
 
-Download the demo-folder to try the program out yourself.
+Download the demo-folder and run the jar-file to try the program out yourself. You can also run the two report-files to see what the original files look like.
 
 
 
