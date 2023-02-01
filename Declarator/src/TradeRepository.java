@@ -18,7 +18,7 @@ public class TradeRepository {
         final File fileMt52 = new File("C:/Users/Jonas/Desktop/ReportHistory-5330507.html");
 
         final Document documentMt4 = fileMt4.exists() ? Jsoup.parse(fileMt4, "UTF-8") : null;
-        final Document documentMt51 = fileMt52.exists() ? Jsoup.parse(fileMt51, "UTF-8") : null;
+        final Document documentMt51 = fileMt51.exists() ? Jsoup.parse(fileMt51, "UTF-8") : null;
         final Document documentMt52 = fileMt52.exists() ? Jsoup.parse(fileMt52, "UTF-8") : null;
 
         if (documentMt4 != null) {
