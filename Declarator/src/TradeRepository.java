@@ -14,17 +14,23 @@ public class TradeRepository {
 
     public List<Trade> getTrades() throws IOException {
         final File fileMt4 = new File("C:/Users/Jonas/Desktop/Statement.htm");
-        final File fileMt5 = new File("C:/Program Files/MetaTrader 5 IC Markets (SC)/MQL5/Report/ReportHistory-5330507.html");
+        final File fileMt51 = new File("C:/Users/Jonas/Desktop/ReportHistory-7148423.html");
+        final File fileMt52 = new File("C:/Users/Jonas/Desktop/ReportHistory-5330507.html");
 
         final Document documentMt4 = fileMt4.exists() ? Jsoup.parse(fileMt4, "UTF-8") : null;
-        final Document documentMt5 = fileMt5.exists() ? Jsoup.parse(fileMt5, "UTF-8") : null;
+        final Document documentMt51 = fileMt52.exists() ? Jsoup.parse(fileMt51, "UTF-8") : null;
+        final Document documentMt52 = fileMt52.exists() ? Jsoup.parse(fileMt52, "UTF-8") : null;
 
         if (documentMt4 != null) {
             List<Element> elementListMt4 = new ArrayList<>(documentMt4.select("table tr"));
             addTradeMt4(elementListMt4);
         }
-        if (documentMt5 != null) {
-            List<Element> elementListMt5 = new ArrayList<>(documentMt5.select("table tr"));
+        if (documentMt51 != null) {
+            List<Element> elementListMt5 = new ArrayList<>(documentMt51.select("table tr"));
+            addTradeMt5(elementListMt5);
+        }
+        if (documentMt52 != null) {
+            List<Element> elementListMt5 = new ArrayList<>(documentMt52.select("table tr"));
             addTradeMt5(elementListMt5);
         }
 
